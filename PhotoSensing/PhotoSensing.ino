@@ -38,17 +38,18 @@ void loop(void) {
  
   Serial.print("Analog reading = ");
   Serial.println(photocellReading);     // the raw analog reading
- 
+  int state =  blinds.getState();
+  Serial.print("The State = ");
+  Serial.println(state);
   //-----------------Adjusts For Large Values------------------
   // LED gets brighter the darker it is at the sensor
   // that means we have to -invert- the reading from 0-1023 back to 1023-0
-  photocellReading = 1023 - photocellReading;
+  //photocellReading = 1023 - photocellReading;
   
   //-------------Adjusts Blind Vertical Movement---------------
-  
-  if(photocellReading > 50 && blinds.getState() != 1)
+  if(photocellReading > 100 && state == 0)
   {
-	Serial.print("Moving Blinds Up!");
+	Serial.println("Moving Blinds Up!");
 	//blinds.Up(5); //5 seconds move up
 	digitalWrite(upPin, HIGH);
 	delay(5000);
@@ -56,14 +57,14 @@ void loop(void) {
 	
 	//blinds.Neutral();
 	digitalWrite(neutralPin, HIGH);
-	delay(100);
+	delay(500);
 	digitalWrite(neutralPin, LOW);
 	
 	blinds.setState(1);
   }
-  else if(photocellReading <= 50 && blinds.getState() != 0)
+  else if(photocellReading < 20 && state == 1)
   {
-	Serial.print("Moving Blinds Down!");
+	Serial.println("Moving Blinds Down!");
 	//blinds.Down(5); //5 seconds move down
 	digitalWrite(downPin, HIGH);
 	delay(5000);
@@ -71,11 +72,11 @@ void loop(void) {
 	
 	//blinds.Neutral();
 	digitalWrite(neutralPin, HIGH);
-	delay(100);
+	delay(500);
 	digitalWrite(neutralPin, LOW);
 	
 	blinds.setState(0);
   }
  
-  delay(100);
+  delay(1000);
 }
